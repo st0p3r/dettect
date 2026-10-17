@@ -439,6 +439,11 @@ def plot_graph(filename, type_graph, output_filename, output_overwrite):
                 yyyymmdd = date.strftime('%Y-%m-%d')
                 graph_values.append({'date': yyyymmdd, 'count': 1})
 
+    if not graph_values:
+        print('[!] No graph is created: the file does not contain any %s score above 0 with a date in the score_logbook.'
+              % type_graph)
+        return
+
     import pandas as pd
     df = pd.DataFrame(graph_values).groupby('date', as_index=False)[['count']].sum()
     df['cumcount'] = df['count'].cumsum()

@@ -241,6 +241,10 @@ def plot_data_sources_graph(filename, output_filename, output_overwrite):
                 yyyymmdd = ds['date_connected'].strftime('%Y-%m-%d')
                 graph_values.append({'date': yyyymmdd, 'count': 1})
 
+    if not graph_values:
+        print('[!] No graph is created: none of the data sources has a \'date_connected\'.')
+        return
+
     import pandas as pd
     df = pd.DataFrame(graph_values).groupby('date', as_index=False)[['count']].sum()
     df['cumcount'] = df['count'].cumsum()
