@@ -1,0 +1,55 @@
+version: 1
+file_type: group-administration
+domain: enterprise-attack
+platform:
+  - Windows
+  - Identity Provider
+groups:
+  - group_name: Red team
+    campaign: Scenario 1
+    technique_id:
+      - T1566.002
+      - T1059.001
+      - T1053.005
+      - T1204.001
+      - T1003.001
+      - T1055
+      - T1027.002
+      - T1218.011
+      - T1070.006
+      - T1082
+      - T1016
+      - T1033
+      - T1087.002
+      - T1550.002
+      - T1057
+      - T1039
+      - T1041
+      - T1071.001
+      - T1001.003
+      - T1114.003
+      - T1560.003
+    software_id:
+      - S0002
+    enabled: true
+  - group_name: Red team
+    campaign: Ransomware
+    technique_id:
+      - T1078.004
+      - T1136.003
+      - T1053.005
+      - T1055
+      - T1003.001
+      - T1033
+      - T1021.006
+      - T1071.001
+      - T1001.003
+      - T1041
+      - T1039
+      - T1566.002
+      - T1078.002
+      - T1036.003
+      - T1486
+      - T1083
+    software_id: []
+    enabled: false

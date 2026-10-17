@@ -1,0 +1,47 @@
+name: Build the Editor
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - 'editor/src/**'
+      - 'editor/public/**'
+      - 'editor/package-lock.json'
+      - 'editor/package.json'
+      - 'editor/vue.config.js'
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Checks-out the repository under $GITHUB_WORKSPACE, so the job can access it
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PERSONAL_TOKEN }}
+
+      # set up NodeJS
+      - uses: actions/setup-node@main
+        with:
+          node-version: '16'
+
+      - name: Install project dependencies
+        run: npm ci
+        working-directory: ./editor
+
+      - name: Build the project
+        run: npm run build
+        working-directory: ./editor
+
+      - name: Perform post build actions
+        run: rm -r node_modules
+        working-directory: ./editor
+
+      - name: Commit files
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add -A
+          git commit -m "New build of the Editor"
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.PERSONAL_TOKEN }}
