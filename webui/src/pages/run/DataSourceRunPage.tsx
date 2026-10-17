@@ -76,8 +76,8 @@ export function DataSourceRunPage() {
           <Field label="Only include systems (applicable to)" help="Filter the data sources on one or more applicable to values (types of systems).">
             <TagInput value={applicableTo} onChange={setApplicableTo} options={systems} allowCustom={false} addLabel="Add system" />
           </Field>
-          <Field label="EQL search" help="Only include data sources matching this EQL query, e.g.: data_sources where products = 'Sysmon'">
-            <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="data_sources where ..." className="font-mono text-xs" />
+          <Field label="EQL search" help='Only include data sources matching this EQL query, e.g.: data_sources where arrayContains(products, "Sysmon")'>
+            <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder='data_sources where arrayContains(products, "Sysmon")' className="font-mono text-xs" />
           </Field>
         </div>
         <CommonOptionsEditor value={common} onChange={setCommon} layer={out.layer} />

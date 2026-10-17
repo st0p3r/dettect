@@ -71,11 +71,11 @@ export function CoverageRunPage({ kind }: { kind: 'visibility' | 'detection' }) 
           <TagInput value={platforms} onChange={setPlatforms} options={platformOptions} allowCustom={false} addLabel="Add platform" />
         </Field>
         <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="EQL search on visibility" help="Only include visibility objects that match this EQL query, e.g.: visibility where score >= 2">
-            <Input value={searchVis} onChange={(e) => setSearchVis(e.target.value)} placeholder="visibility where ..." className="font-mono text-xs" />
+          <Field label="EQL search on visibility" help="Only include visibility objects that match this EQL query, e.g.: techniques where visibility.score_logbook.score >= 2">
+            <Input value={searchVis} onChange={(e) => setSearchVis(e.target.value)} placeholder="techniques where visibility.score_logbook.score >= 2" className="font-mono text-xs" />
           </Field>
-          <Field label="EQL search on detection" help="Only include detection objects that match this EQL query, e.g.: detection where location = 'EDR'">
-            <Input value={searchDet} onChange={(e) => setSearchDet(e.target.value)} placeholder="detection where ..." className="font-mono text-xs" />
+          <Field label="EQL search on detection" help='Only include detection objects that match this EQL query, e.g.: techniques where arrayContains(detection.location, "EDR")'>
+            <Input value={searchDet} onChange={(e) => setSearchDet(e.target.value)} placeholder="techniques where detection.score_logbook.score >= 2" className="font-mono text-xs" />
           </Field>
         </div>
         <div className="flex flex-wrap gap-x-6 gap-y-3">

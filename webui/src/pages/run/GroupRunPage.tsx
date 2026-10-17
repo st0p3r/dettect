@@ -127,10 +127,10 @@ export function GroupRunPage() {
           {coverageOverlay && (
             <div className="grid gap-4 sm:grid-cols-2">
               <Field label="EQL search on visibility">
-                <Input value={searchVis} onChange={(e) => setSearchVis(e.target.value)} placeholder="visibility where ..." className="font-mono text-xs" />
+                <Input value={searchVis} onChange={(e) => setSearchVis(e.target.value)} placeholder="techniques where visibility.score_logbook.score >= 2" className="font-mono text-xs" />
               </Field>
               <Field label="EQL search on detection">
-                <Input value={searchDet} onChange={(e) => setSearchDet(e.target.value)} placeholder="detection where ..." className="font-mono text-xs" />
+                <Input value={searchDet} onChange={(e) => setSearchDet(e.target.value)} placeholder="techniques where detection.score_logbook.score >= 2" className="font-mono text-xs" />
               </Field>
               <label className="flex items-center gap-2 text-sm">
                 <Switch checked={allScores} onCheckedChange={setAllScores} /> Search all scores in the score logbook
