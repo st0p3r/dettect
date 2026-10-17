@@ -37,6 +37,28 @@ app = FastAPI(title='DeTT&CT', lifespan=_lifespan, docs_url='/api/docs', openapi
 jobs = JobManager()
 _attack_cache = {}
 
+# The ATT&CK Navigator (hosted on GitHub pages) loads layer files from this server via '#layerURL=...'. This only works
+# when the browser is allowed to share the response with the Navigator: cross-origin (CORS) and from a public website
+# to localhost (Private Network Access). Only GET requests for output files from the Navigator's origin are allowed.
+NAVIGATOR_ORIGIN = 'https://mitre-attack.github.io'
+
+
+@app.middleware('http')
+async def _navigator_cors(request: Request, call_next):
+    navigator = request.headers.get('origin') == NAVIGATOR_ORIGIN and request.url.path.startswith('/api/files/output/')
+    if navigator and request.method == 'OPTIONS':
+        response = PlainTextResponse('', status_code=204)
+        response.headers['Access-Control-Allow-Methods'] = 'GET'
+        response.headers['Access-Control-Allow-Headers'] = request.headers.get('access-control-request-headers', '*')
+        response.headers['Access-Control-Max-Age'] = '600'
+    else:
+        response = await call_next(request)
+    if navigator:
+        response.headers['Access-Control-Allow-Origin'] = NAVIGATOR_ORIGIN
+        response.headers['Access-Control-Allow-Private-Network'] = 'true'
+        response.headers['Vary'] = 'Origin'
+    return response
+
 
 # ---------------------------------------------------------------------------------------------------------------------
 # Settings

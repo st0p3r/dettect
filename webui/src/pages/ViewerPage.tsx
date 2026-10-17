@@ -165,7 +165,11 @@ export function ViewerPage() {
             <Card>
               <CardHeader>
                 <CardTitle>{layer.name}</CardTitle>
-                <CardDescription>A quick preview of the layer. Open it in the ATT&CK Navigator for the full matrix view.</CardDescription>
+                <CardDescription>
+                  A quick preview of the layer. Open it in the ATT&CK Navigator for the full matrix view. If the Navigator can't load the layer, allow
+                  access to the local network when your browser asks, or download the file and use “Open Existing Layer → Upload from local” in the
+                  Navigator.
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <LayerView layer={layer} />

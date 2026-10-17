@@ -152,7 +152,17 @@ export function FileActions({ file, fileType, compact = false, onChange }: { fil
       )}
       {ext === 'json' && file.dir === 'output' && (
         <Button variant="outline" size={size} asChild title="Open in ATT&CK Navigator">
-          <a href={navigatorUrl(file.name)} target="_blank" rel="noreferrer">
+          <a
+            href={navigatorUrl(file.name)}
+            target="_blank"
+            rel="noreferrer"
+            onClick={() =>
+              toast.info('Opening the ATT&CK Navigator', {
+                description: 'If your browser asks to allow access to your local network (or to apps on this device), click Allow so the Navigator can load the layer.',
+                duration: 10000
+              })
+            }
+          >
             <ExternalLink />
             {!compact && 'Navigator'}
           </a>
