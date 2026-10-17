@@ -1,9 +1,12 @@
-# DeTT&CT CLI
+# DeTT&CT
 cache/
 output/
+input/
+stix-data/
+settings.json
 
-# DeTT&CT Editor
-editor/node_modules/
+# Web interface
+webui/node_modules/
 npm-debug.log
 
 # Byte-compiled / optimized / DLL files

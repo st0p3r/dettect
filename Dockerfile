@@ -13,6 +13,9 @@ RUN mkdir -p input
 # within this directory, the output files from DeTT&CT are written. Such as ATT&CK Navigator layer files.
 RUN mkdir -p output
 
-# set an environment variable for the DeTT&CT Editor and expose port 8080
-ENV DeTTECT_DOCKER_CONTAINER 1
+# set an environment variable for the DeTT&CT web interface and expose port 8080
+ENV DeTTECT_DOCKER_CONTAINER=1
 EXPOSE 8080/tcp
+
+# start the web interface by default
+CMD ["python", "dettect.py", "editor"]

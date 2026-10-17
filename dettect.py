@@ -3,7 +3,6 @@ from technique_mapping import *
 from group_mapping import *
 from eql_yaml import *
 from generic_mode import *
-from editor import DeTTECTEditor
 import generic
 import argparse
 import os
@@ -18,8 +17,7 @@ def _init_menu():
     Initialise the command line parameter menu.
     :return:
     """
-    menu_parser = argparse.ArgumentParser(description='Detect Tactics, Techniques & Combat Threats',
-                                          epilog='Source: https://github.com/rabobank-cdc/DeTTECT')
+    menu_parser = argparse.ArgumentParser(description='Detect Tactics, Techniques & Combat Threats')
     menu_parser.add_argument('--version', action='version', version='%(prog)s ' + VERSION)
 
     # add subparsers
@@ -28,9 +26,13 @@ def _init_menu():
                                                         'help info displayed using: {editor, datasource, visibility, detection, '
                                                         'group, generic} --help', metavar='', dest='subparser')
 
-    parser_editor = subparsers.add_parser('editor', aliases=['e'], help='DeTT&CT Editor',
-                                          description='Start the DeTT&CT Editor for easy editing the YAML administration files')
+    parser_editor = subparsers.add_parser('editor', aliases=['e', 'web'], help='DeTT&CT web interface',
+                                          description='Start the DeTT&CT web interface to edit the YAML administration files '
+                                                      'and to run all DeTT&CT functionality from your browser')
     parser_editor.add_argument('-p', '--port', help='port where the webserver listens on (default is 8080)', required=False, default=8080)
+    parser_editor.add_argument('--host', help='address where the webserver listens on (default is 127.0.0.1, or 0.0.0.0 '
+                                              'within the Docker container)', required=False, default=None)
+    parser_editor.add_argument('--no-browser', help='do not open the web interface in a web browser', action='store_true')
 
     # create the data source parser
     parser_data_sources = subparsers.add_parser('datasource', help='data source mapping and quality',
@@ -300,8 +302,10 @@ def _menu(menu_parser):
         urllib3.disable_warnings()
         generic.verify_tls = False
 
-    if args.subparser in ['editor', 'e']:
-        DeTTECTEditor(int(args.port)).start()
+    if args.subparser in ['editor', 'e', 'web']:
+        from server.app import run as run_web_interface  # pylint: disable=import-outside-toplevel
+        host = args.host or ('0.0.0.0' if os.getenv('DeTTECT_DOCKER_CONTAINER') else '127.0.0.1')
+        run_web_interface(host=host, port=int(args.port), open_browser=not args.no_browser)
 
     elif args.subparser in ['datasource', 'ds']:
         if check_file(args.file_ds, FILE_TYPE_DATA_SOURCE_ADMINISTRATION, args.health):
