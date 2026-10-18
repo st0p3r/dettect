@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { AlertTriangle, ArrowRight, Database, Eye, FolderOpen, ListChecks, Radar, ShieldCheck, Sparkles, Swords, Users } from 'lucide-react';
+import { AlertTriangle, ArrowRight, Database, Eye, FolderOpen, Gauge, ListChecks, Radar, ShieldCheck, Sparkles, Swords, Users } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -131,6 +131,21 @@ export function DashboardPage() {
             </Button>
           </CardContent>
         </Card>
+      )}
+
+      {count('technique-administration') > 0 && (
+        <Link to="/coverage" className="mt-6 block">
+          <Card className="flex-row items-center gap-4 px-5 transition-colors hover:border-primary/40">
+            <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+              <Gauge className="size-5" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="font-medium">Coverage dashboard</div>
+              <div className="text-sm text-muted-foreground">Visibility and detection coverage per tactic, progress over time and quick wins.</div>
+            </div>
+            <ArrowRight className="size-4 text-muted-foreground" />
+          </Card>
+        </Link>
       )}
 
       <div className="mt-6 grid gap-6 xl:grid-cols-3">

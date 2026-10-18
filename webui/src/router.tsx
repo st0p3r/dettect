@@ -2,6 +2,7 @@ import { createBrowserRouter } from 'react-router-dom';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { DashboardPage } from '@/pages/DashboardPage';
 import { FilesPage } from '@/pages/FilesPage';
+import { CoveragePage } from '@/pages/CoveragePage';
 import { DataSourcesEditorPage } from '@/pages/editor/DataSourcesEditorPage';
 import { TechniquesEditorPage } from '@/pages/editor/TechniquesEditorPage';
 import { GroupsEditorPage } from '@/pages/editor/GroupsEditorPage';
@@ -22,6 +23,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <DashboardPage /> },
       { path: 'files', element: <FilesPage /> },
+      { path: 'coverage', element: <CoveragePage /> },
       { path: 'editor/data-sources', element: <DataSourcesEditorPage /> },
       { path: 'editor/techniques', element: <TechniquesEditorPage /> },
       { path: 'editor/groups', element: <GroupsEditorPage /> },

@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { ChevronDown, ExternalLink, History, ListChecks, Plus, Trash2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -18,7 +19,7 @@ import { FileDetails } from '@/components/editor/FileDetails';
 import { ItemList } from '@/components/editor/ItemList';
 import { AddItemPopover } from '@/components/editor/AddItemPopover';
 import { useAdminFile } from '@/hooks/use-admin-file';
-import { getTechniques } from '@/lib/attack';
+import { attackSourceLabel, useAttackData } from '@/lib/attack';
 import { DETECTION_SCORES, VISIBILITY_SCORES, newDetection, newTechnique, newVisibility, type ScoreEntry, type ScoreObject, type Technique, type TechniqueFile } from '@/lib/constants';
 import { cn, today } from '@/lib/utils';
 
@@ -238,9 +239,11 @@ function ScoreSection({ technique, kind, suggestions, onUpdate }: { technique: T
 export function TechniquesEditorPage() {
   const state = useAdminFile<TechniqueFile>('technique-administration');
   const { doc, update } = state;
-  const [selected, setSelected] = useState<string | null>(null);
+  const [params] = useSearchParams();
+  const [selected, setSelected] = useState<string | null>(() => params.get('technique'));
 
-  const attackTechniques = useMemo(() => (doc ? getTechniques(doc.domain) : []), [doc?.domain]);
+  const attack = useAttackData(doc?.domain);
+  const attackTechniques = useMemo(() => attack?.techniques ?? [], [attack]);
   const attackMap = useMemo(() => new Map(attackTechniques.map((t) => [t.technique_id, t])), [attackTechniques]);
   const ids = new Set(doc?.techniques.map((t) => t.technique_id));
   const current = doc?.techniques.find((t) => t.technique_id === selected) ?? null;
@@ -281,6 +284,7 @@ export function TechniquesEditorPage() {
           <div className="grid gap-4 lg:grid-cols-[380px_1fr]">
             <ItemList
               noun="technique"
+              filters={<p className="text-xs text-muted-foreground">Suggestions: {attackSourceLabel(attack)}</p>}
               selected={selected}
               onSelect={setSelected}
               onDelete={remove}

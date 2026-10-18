@@ -14,7 +14,7 @@ import { EditorShell } from '@/components/editor/EditorShell';
 import { FileDetails } from '@/components/editor/FileDetails';
 import { ItemList } from '@/components/editor/ItemList';
 import { useAdminFile } from '@/hooks/use-admin-file';
-import { getSoftware, getTechniques } from '@/lib/attack';
+import { attackSourceLabel, useAttackData } from '@/lib/attack';
 import { newGroup, type GroupFile } from '@/lib/constants';
 
 const GROUP_KEYS = Object.keys(newGroup(''));
@@ -25,15 +25,16 @@ export function GroupsEditorPage() {
   const [selected, setSelected] = useState<number | null>(null);
 
   const platformMatch = (platforms: string[]) => !doc || doc.platform.includes('all') || platforms.some((p) => doc.platform.includes(p));
+  const attack = useAttackData(doc?.domain);
   const techniqueOptions = useMemo(
-    () => (doc ? getTechniques(doc.domain).filter((t) => platformMatch(t.platforms)).map((t) => ({ value: t.technique_id, label: `${t.technique_id} ${t.technique_name}` })) : []),
+    () => (attack ? attack.techniques.filter((t) => platformMatch(t.platforms)).map((t) => ({ value: t.technique_id, label: `${t.technique_id} ${t.technique_name}` })) : []),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [doc?.domain, doc?.platform]
+    [attack, doc?.platform]
   );
   const softwareOptions = useMemo(
-    () => (doc ? getSoftware(doc.domain).filter((s) => platformMatch(s.platforms)).map((s) => ({ value: s.software_id, label: `${s.software_id} ${s.software_name}` })) : []),
+    () => (attack ? attack.software.filter((s) => platformMatch(s.platforms)).map((s) => ({ value: s.software_id, label: `${s.software_id} ${s.software_name}` })) : []),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [doc?.domain, doc?.platform]
+    [attack, doc?.platform]
   );
 
   const current = selected !== null ? doc?.groups[selected] : undefined;
@@ -69,6 +70,7 @@ export function GroupsEditorPage() {
           <div className="grid gap-4 lg:grid-cols-[380px_1fr]">
             <ItemList
               noun="group"
+              filters={<p className="text-xs text-muted-foreground">Suggestions: {attackSourceLabel(attack)}</p>}
               selected={selected === null ? null : String(selected)}
               onSelect={(k) => setSelected(Number(k))}
               onDelete={remove}

@@ -10,6 +10,7 @@ import { Field, PageHeader, SwitchRow } from '@/components/common';
 import { JobPanel } from '@/components/JobPanel';
 import { useAsync } from '@/hooks/use-async';
 import { api, type Settings as SettingsType } from '@/lib/api';
+import { resetAttackData } from '@/lib/attack';
 import { cn } from '@/lib/utils';
 
 export function SettingsPage() {
@@ -27,6 +28,7 @@ export function SettingsPage() {
     if (s.stix_source === 'local' && !s.local_stix_path.trim()) return toast.error('Enter the path to the local STIX data.');
     try {
       saved.setData(await api.saveSettings(s));
+      resetAttackData();
       toast.success('Settings saved');
     } catch (e) {
       toast.error((e as Error).message);
@@ -139,6 +141,7 @@ export function SettingsPage() {
               variant="outline"
               onClick={async () => {
                 const r = await api.clearCache();
+                resetAttackData();
                 toast.success(`${r.removed} cache file(s) removed`);
                 info.reload();
               }}

@@ -7,6 +7,7 @@ import {
   Eye,
   FileStack,
   FolderOpen,
+  Gauge,
   LayoutDashboard,
   ListChecks,
   Menu,
@@ -30,6 +31,7 @@ const NAV = [
     title: 'Overview',
     items: [
       { to: '/', label: 'Dashboard', icon: LayoutDashboard, end: true },
+      { to: '/coverage', label: 'Coverage', icon: Gauge },
       { to: '/files', label: 'Files', icon: FolderOpen }
     ]
   },

@@ -1,0 +1,1 @@
+var e=[`Web [DeTT&CT data source]`,`DHCP [DeTT&CT data source]`,`Internal DNS [DeTT&CT data source]`,`Email [DeTT&CT data source]`];export{e as default};

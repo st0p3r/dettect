@@ -12,7 +12,7 @@ import { PageHeader } from '@/components/common';
 import { FileActions } from '@/components/JobPanel';
 import { useAsync } from '@/hooks/use-async';
 import { api, fileUrl, type Dir } from '@/lib/api';
-import { techniqueMap } from '@/lib/attack';
+import { techniqueMap, useAttackData } from '@/lib/attack';
 import { detectFileType } from '@/lib/yaml';
 import type { Domain } from '@/lib/constants';
 
@@ -36,7 +36,8 @@ interface Layer {
 
 function LayerView({ layer }: { layer: Layer }) {
   const [query, setQuery] = useState('');
-  const names = useMemo(() => techniqueMap(layer.domain ?? 'enterprise-attack'), [layer.domain]);
+  const attack = useAttackData(layer.domain ?? 'enterprise-attack');
+  const names = useMemo(() => techniqueMap(attack), [attack]);
   const techniques = useMemo(() => {
     const merged = new Map<string, LayerTechnique[]>();
     for (const t of layer.techniques) {

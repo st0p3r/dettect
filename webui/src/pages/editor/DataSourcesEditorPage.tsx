@@ -17,7 +17,7 @@ import { FileDetails } from '@/components/editor/FileDetails';
 import { ItemList } from '@/components/editor/ItemList';
 import { AddItemPopover } from '@/components/editor/AddItemPopover';
 import { useAdminFile } from '@/hooks/use-admin-file';
-import { getDataSources } from '@/lib/attack';
+import { attackSourceLabel, getDataSources, useAttackData } from '@/lib/attack';
 import {
   DATA_QUALITY_DIMENSIONS,
   DATA_QUALITY_SCORES,
@@ -241,7 +241,8 @@ export function DataSourcesEditorPage() {
   const [selected, setSelected] = useState<string | null>(null);
 
   const platforms = useMemo(() => Array.from(new Set(doc?.systems.flatMap((s) => s.platform) ?? [])), [doc?.systems]);
-  const suggestions = useMemo(() => (doc ? getDataSources(doc.domain, platforms) : []), [doc?.domain, platforms]);
+  const attack = useAttackData(doc?.domain);
+  const suggestions = useMemo(() => getDataSources(attack, platforms), [attack, platforms]);
   const names = new Set(doc?.data_sources.map((d) => d.data_source_name));
   const current = doc?.data_sources.find((d) => d.data_source_name === selected) ?? null;
 
@@ -283,6 +284,7 @@ export function DataSourcesEditorPage() {
           <div className="grid gap-4 lg:grid-cols-[380px_1fr]">
             <ItemList
               noun="data source"
+              filters={<p className="text-xs text-muted-foreground">Suggestions: {attackSourceLabel(attack)}</p>}
               selected={selected}
               onSelect={setSelected}
               onDelete={remove}

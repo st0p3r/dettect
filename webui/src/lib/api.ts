@@ -59,6 +59,40 @@ export interface AttackGroup {
   domains: string[];
 }
 
+export interface CoverageSummary {
+  covered: number;
+  percentage: number;
+  distribution: Record<string, number>;
+}
+
+export interface CoverageTechnique {
+  technique_id: string;
+  technique_name: string;
+  tactics: string[];
+  visibility: number;
+  detection: number;
+}
+
+export interface Coverage {
+  file: string;
+  name: string;
+  domain: string;
+  platforms: string[];
+  attack_version: string;
+  attack_source: string;
+  include_subtechniques: boolean;
+  scope: number;
+  administrated: number;
+  administrated_in_scope: number;
+  unknown_techniques: string[];
+  visibility: CoverageSummary;
+  detection: CoverageSummary;
+  tactics: { id: string; shortname: string; name: string; total: number; visibility: number; detection: number }[];
+  trend: { month: string; visibility: number; detection: number }[];
+  undated_scores: number;
+  quick_wins: CoverageTechnique[];
+}
+
 async function request<T>(url: string, init?: RequestInit): Promise<T> {
   const res = await fetch(url, init);
   if (!res.ok) {
@@ -119,5 +153,7 @@ export const api = {
   cancelJob: (id: string) => request<Job>(`/api/jobs/${id}/cancel`, { method: 'POST' }),
   clearJobs: () => request('/api/jobs', { method: 'DELETE' }),
 
-  attack: (kind: 'groups' | 'campaigns') => request<AttackGroup[]>(`/api/attack/${kind}`)
+  attack: (kind: 'groups' | 'campaigns') => request<AttackGroup[]>(`/api/attack/${kind}`),
+  editorData: (domain: 'enterprise' | 'ics' | 'mobile') => request<unknown>(`/api/attack/editor-data/${domain}`),
+  coverage: (name: string, subtechniques = true) => request<Coverage>(`/api/coverage/${encodeURIComponent(name)}?subtechniques=${subtechniques}`)
 };

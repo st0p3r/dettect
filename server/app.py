@@ -16,6 +16,7 @@ from fastapi.responses import FileResponse, JSONResponse, PlainTextResponse, Str
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
+from server import attack_data as attack_store
 from server.fileinfo import file_info as _file_info
 from server.jobs import JobManager
 from server.paths import ROOT, INPUT_DIR, OUTPUT_DIR, CACHE_DIR, STIX_DIR, SETTINGS_FILE, WEBUI_DIST, prepare_folders
@@ -103,6 +104,7 @@ def put_settings(settings: Settings):
         raise HTTPException(400, 'Invalid STIX source')
     SETTINGS_FILE.write_text(json.dumps(settings.model_dump(), indent=2))
     _attack_cache.clear()
+    attack_store.clear_memory_cache()
     return load_settings()
 
 
@@ -142,6 +144,7 @@ def clear_cache():
                 p.unlink()
                 count += 1
     _attack_cache.clear()
+    attack_store.clear_memory_cache()
     return {'removed': count}
 
 
@@ -365,6 +368,38 @@ def _load_attack(kind):
         return sorted(result, key=lambda x: x['id'] or '')
     finally:
         os.chdir(cwd)
+
+
+@app.get('/api/attack/editor-data/{domain}')
+async def attack_editor_data(domain: str):
+    """
+    Techniques, tactics, software and data sources of a domain ('enterprise', 'ics' or 'mobile') from the configured
+    ATT&CK source.
+    """
+    if domain not in attack_store.DOMAINS:
+        raise HTTPException(404, 'Unknown domain')
+    try:
+        return await asyncio.to_thread(attack_store.get_attack_data, domain, load_settings())
+    except (SystemExit, Exception) as e:  # pylint: disable=broad-except
+        raise HTTPException(503, 'Could not load the ATT&CK data. Check the ATT&CK data source in the settings. '
+                                 '(%s)' % (e.__class__.__name__ if isinstance(e, SystemExit) else e))
+
+
+@app.get('/api/coverage/{name}')
+async def coverage(name: str, subtechniques: bool = True):
+    """
+    Coverage statistics (visibility and detection) of a technique administration file in "My files".
+    """
+    path = INPUT_DIR / _safe_name(name)
+    if not path.is_file():
+        raise HTTPException(404, 'File not found')
+    if _file_info(path).get('file_type') != 'technique-administration':
+        raise HTTPException(400, 'Not a technique administration file')
+    try:
+        return await asyncio.to_thread(attack_store.compute_coverage, str(path), load_settings(), subtechniques)
+    except (SystemExit, Exception) as e:  # pylint: disable=broad-except
+        raise HTTPException(503, 'Could not calculate the coverage: %s' % (
+            e.__class__.__name__ if isinstance(e, SystemExit) else e))
 
 
 @app.get('/api/attack/{kind}')

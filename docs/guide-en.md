@@ -8,7 +8,7 @@ This guide covers every part of the DeTT&CT web interface: what each section doe
 2. [Core concepts](#2-core-concepts)
 3. [Installation, running and first steps](#3-installation-running-and-first-steps)
 4. [Getting around the web interface](#4-getting-around-the-web-interface)
-5. [Dashboard](#5-dashboard)
+5. [Dashboard and coverage](#5-dashboard)
 6. [Files](#6-files)
 7. [Data sources editor](#7-data-sources-editor)
 8. [Techniques editor](#8-techniques-editor)
@@ -215,7 +215,7 @@ The menu on the left has four sections:
 
 | Section | Pages | Use |
 |---|---|---|
-| **Overview** | Dashboard, Files | Overview and file management |
+| **Overview** | Dashboard, Coverage, Files | Overview, coverage dashboard and file management |
 | **Administration** | Data sources, Techniques, Groups | Editing the YAML files (data entry) |
 | **Analysis** | Data source mapping, Visibility coverage, Detection coverage, Threat groups, ATT&CK statistics | Generating output and analysis |
 | **System** | Jobs, Settings | History of runs and settings |
@@ -236,6 +236,26 @@ The menu on the left has four sections:
 - When you use MITRE's online server, a yellow warning suggests downloading the data.
 
 **Use:** your daily starting point. For new users, the **Add sample files** button is the best way to start.
+
+### 5.1 Coverage dashboard
+
+The **Coverage** page shows, for a technique file, how much of ATT&CK your visibility and detection cover, without generating any output. Select the file at the top. With **Include sub-techniques** off, only parent techniques are counted.
+
+**Scope:** all ATT&CK techniques for the platforms of the file (for ICS: all ICS techniques), from the ATT&CK version set in Settings.
+
+| Part | What it shows |
+|---|---|
+| **Visibility / Detection coverage** | The share of techniques in scope with a visibility score ≥ 1, and with a detection score ≥ 1. A detection score of 0 (forensics/context only) doesn't count as a detection. |
+| **Techniques in scope** | The number of ATT&CK techniques in scope, and how many of them are in your file |
+| **Quick wins** | Techniques with visibility ≥ 2 but no detection: the data is there, only a rule is missing |
+| **Coverage per tactic** | Per tactic, the percentage with visibility and with detection. The **Table** button shows the same numbers as a table. |
+| **Visibility / Detection scores** | How many techniques have each score |
+| **Progress over time** | The number of techniques with visibility and detection at the end of each month, based on the dates in the score logbooks. Scores without a date are not included. |
+| **Quick wins list** | The quick wins sorted by visibility. **Edit** opens the technique directly in the techniques editor. |
+
+Hover over the bars and the graph to see the exact numbers. Techniques in your file that don't exist in this ATT&CK version (revoked or deprecated) are listed in a yellow warning and not counted.
+
+**Use:** a quick status overview for yourself or management, and a to-do list for the detection engineers (quick wins).
 
 ---
 
@@ -569,6 +589,9 @@ techniques where arrayContains(visibility.applicable_to, "all")
 
 ### Download ATT&CK data
 Downloads the ATT&CK data (about 65 MB) from GitHub into the `stix-data/` folder and automatically switches the settings to Local. Download it again every few months (after a new ATT&CK release).
+
+### ATT&CK data in the editors and the coverage dashboard
+The suggestions in the editors (techniques, software and data sources) and the coverage dashboard use the same ATT&CK data as the analyses. Below the search box of each editor you can see where they come from, e.g. *ATT&CK v19.1 · local data*. The first time this takes a few seconds; after that it is cached. If the ATT&CK data can't be loaded, the editors fall back to a built-in list (*built-in ATT&CK list*).
 
 ### Cache
 Processed ATT&CK data is cached. If you downloaded new data or results look odd, click **Clear cache**.
